@@ -1,3 +1,4 @@
+import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 
 interface DadosUsuario {
@@ -17,4 +18,20 @@ const verificarToken = (token: string) => {
   }
 }
 
-export default { gerarToken, verificarToken }
+const autenticarMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  const token = req.header('Authorization')
+
+  if (!token) {
+    return res.status(401).json({ mensagem: 'Token de autenticação ausente' })
+  }
+
+  try {
+    const usuarioAutenticado = verificarToken(token)
+    req.body.usuarioAutenticado = usuarioAutenticado
+    next()
+  } catch (erro) {
+    return res.status(403).json({ mensagem: 'Token de autenticação inválido' })
+  }
+}
+
+export default { gerarToken, autenticarMiddleware }

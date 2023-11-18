@@ -17,9 +17,7 @@ const addArtista = (req: Request, res: Response) => {
   const novoArtista = req.body
   novoArtista.id = dados.artistas.length + 1
   dados.artistas.push(novoArtista)
-  res
-    .status(201)
-    .json({ mensagem: 'Artista criado com sucesso', artista: novoArtista })
+  res.status(201).json({ mensagem: 'Artista criado com sucesso', artista: novoArtista })
 }
 
 const putArtista = (req: Request, res: Response) => {
@@ -58,10 +56,57 @@ const deleteArtista = (req: Request, res: Response) => {
   })
 }
 
+const obterArtistasPaginadas = (req: Request, res: Response) => {
+  const pagina = parseInt(req.query.pagina as string, 10) || 1 // Página atual, padrão para 1
+  const itensPorPagina = parseInt(req.query.itensPorPagina as string, 10) || 10 // Itens por página, padrão para 10
+
+  const inicioIndice = (pagina - 1) * itensPorPagina
+  const fimIndice = inicioIndice + itensPorPagina
+
+  const artistasPaginadas = dados.artistas.slice(inicioIndice, fimIndice)
+
+  res.json({
+    mensagem: 'Artistas obtidas com sucesso (com paginação)',
+    paginaAtual: pagina,
+    itensPorPagina: itensPorPagina,
+    totalItens: dados.artistas.length,
+    artistas: artistasPaginadas,
+  })
+}
+
+const obterArtistasFiltrados = (req: Request, res: Response) => {
+  let artistasFiltradas = [...dados.artistas]
+
+  // Aplicar filtros se existirem
+  const { nome } = req.query
+
+  if (nome) {
+    artistasFiltradas = dados.artistas.filter((artista) => artista.nome.startsWith(nome as string))
+  }
+
+  res.json({
+    mensagem: 'Artistas obtidos com sucesso (com filtros)',
+    artistas: artistasFiltradas,
+  })
+}
+
+const ordenarArtistasPorNome = (req: Request, res: Response) => {
+  const artistasCopia = [...dados.artistas]
+  artistasCopia.sort()
+
+  res.json({
+    mensagem: 'Artistas obtidos com sucesso (ordenados)',
+    artistas: artistasCopia.sort((a, b) => a.nome.localeCompare(b.nome)),
+  })
+}
+
 export default {
   addArtista,
   getAll,
   getArtista,
   putArtista,
   deleteArtista,
+  obterArtistasPaginadas,
+  obterArtistasFiltrados,
+  ordenarArtistasPorNome,
 }

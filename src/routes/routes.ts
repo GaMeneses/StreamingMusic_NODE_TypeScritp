@@ -195,29 +195,38 @@ const routes = express.Router()
  *             example:
  *               mensagem: Música não encontrada
  */
-routes.post('/musicas', token.verificarToken, musicaController.addMusica)
-routes.get('/musicas', token.verificarToken, musicaController.getAll)
-routes.get('/musicas/:id', token.verificarToken, musicaController.getMusica)
-routes.put('/musicas/:id', token.verificarToken, musicaController.putMusica)
-routes.delete('/musicas/:id', token.verificarToken, musicaController.deleteMusica)
+routes.post('/musicas', token.autenticarMiddleware, musicaController.addMusica)
+routes.get('/musicas', token.autenticarMiddleware, musicaController.getAll)
+routes.get('/musicas/:id', token.autenticarMiddleware, musicaController.getMusica)
+routes.get('/musicasPaginada', token.autenticarMiddleware, musicaController.obterMusicasPaginadas)
+routes.get('/musicasPorFiltro', token.autenticarMiddleware, musicaController.obterMusicasFiltradas)
+routes.get('/musicasOrdernadas', token.autenticarMiddleware, musicaController.ordenarMusicasPorTitulo)
+routes.put('/musicas/:id', token.autenticarMiddleware, musicaController.putMusica)
+routes.delete('/musicas/:id', token.autenticarMiddleware, musicaController.deleteMusica)
 
 /*Artistas*/
 
-routes.post('/artistas', artistaController.addArtista)
-routes.get('/artistas', artistaController.getAll)
-routes.get('/artistas/:id', artistaController.getArtista)
-routes.put('/artistas/:id', artistaController.putArtista)
-routes.delete('/artistas/:id', artistaController.deleteArtista)
+routes.post('/artistas', token.autenticarMiddleware, artistaController.addArtista)
+routes.get('/artistas', token.autenticarMiddleware, artistaController.getAll)
+routes.get('/artistas/:id', token.autenticarMiddleware, artistaController.getArtista)
+routes.get('/artistasPaginada', token.autenticarMiddleware, artistaController.obterArtistasPaginadas)
+routes.get('/artistasPorFiltro', token.autenticarMiddleware, artistaController.obterArtistasFiltrados)
+routes.get('/artistasOrdernados', token.autenticarMiddleware, artistaController.ordenarArtistasPorNome)
+routes.put('/artistas/:id', token.autenticarMiddleware, artistaController.putArtista)
+routes.delete('/artistas/:id', token.autenticarMiddleware, artistaController.deleteArtista)
 
 /*Playlist*/
 
-routes.post('/playlists', playlistController.addPlaylist)
-routes.post('/playlists/:id/AdicionarMusica', playlistController.addMusica)
-routes.get('/playlists', playlistController.getAll)
-routes.get('/playlists/:id', playlistController.getPlaylist)
-routes.put('/playlists/:id', playlistController.putPlaylist)
-routes.delete('/playlists/:id', playlistController.deletePlaylist)
-routes.delete('/playlists/:id/RemoverMusica/:musica', playlistController.deleteMusica)
+routes.post('/playlists', token.autenticarMiddleware, playlistController.addPlaylist)
+routes.post('/playlists/:id/AdicionarMusica', token.autenticarMiddleware, playlistController.addMusica)
+routes.get('/playlists', token.autenticarMiddleware, playlistController.getAll)
+routes.get('/playlists/:id', token.autenticarMiddleware, playlistController.getPlaylist)
+routes.get('/playlistsPaginada', token.autenticarMiddleware, playlistController.obterPlaylistsPaginadas)
+routes.get('/playlistsPorFiltro', token.autenticarMiddleware, playlistController.obterPlaylistsFiltrados)
+routes.get('/playlistsOrdernadas', token.autenticarMiddleware, playlistController.ordenarPlaylistPorNome)
+routes.put('/playlists/:id', token.autenticarMiddleware, playlistController.putPlaylist)
+routes.delete('/playlists/:id', token.autenticarMiddleware, playlistController.deletePlaylist)
+routes.delete('/playlists/:id/RemoverMusica/:musica', token.autenticarMiddleware, playlistController.deleteMusica)
 
 /*Login*/
 

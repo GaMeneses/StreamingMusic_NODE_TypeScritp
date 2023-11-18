@@ -20,17 +20,14 @@ const addPlaylist = (req: Request, res: Response) => {
 
   if (ids.length > 0) {
     return res.status(404).json({
-      mensagem:
-        'Não foi possível criar a playList, essa(s) musica(s) não existem!',
+      mensagem: 'Não foi possível criar a playList, essa(s) musica(s) não existem!',
       musicas: ids,
     })
   }
 
   novaPlaylist.id = dados.playlists.length + 1
   dados.playlists.push(novaPlaylist)
-  res
-    .status(201)
-    .json({ mensagem: 'Playlist criada com sucesso', playlist: novaPlaylist })
+  res.status(201).json({ mensagem: 'Playlist criada com sucesso', playlist: novaPlaylist })
 }
 
 const addMusica = (req: Request, res: Response) => {
@@ -46,21 +43,16 @@ const addMusica = (req: Request, res: Response) => {
 
   if (ids.length > 0) {
     return res.status(404).json({
-      mensagem:
-        'Não foi possível inserir na playList, essa(s) musica(s) não existe(m)!',
+      mensagem: 'Não foi possível inserir na playList, essa(s) musica(s) não existe(m)!',
       musicas: ids,
     })
   }
 
-  ids = verificaMusicasDaListaAtual(
-    novasMusicas.musicas,
-    dados.playlists[index].musicas,
-  )
+  ids = verificaMusicasDaListaAtual(novasMusicas.musicas, dados.playlists[index].musicas)
 
   if (ids.length > 0) {
     return res.status(404).json({
-      mensagem:
-        'Não foi possível inserir na playList, essa(s) musica(s) já existe(m)!',
+      mensagem: 'Não foi possível inserir na playList, essa(s) musica(s) já existe(m)!',
       musicas: ids,
     })
   }
@@ -117,9 +109,7 @@ const deleteMusica = (req: Request, res: Response) => {
   const indice = playlist.musicas.indexOf(musicaId)
 
   if (indice === -1) {
-    return res
-      .status(404)
-      .json({ mensagem: 'musica não encontrada na playlist' })
+    return res.status(404).json({ mensagem: 'musica não encontrada na playlist' })
   }
 
   const musicaRemovida = playlist.musicas.splice(indice, 1)
@@ -127,6 +117,40 @@ const deleteMusica = (req: Request, res: Response) => {
   res.status(200).json({
     mensagem: 'Musica removida da playlist com sucesso',
     musica: musicaRemovida,
+  })
+}
+
+const obterPlaylistsPaginadas = (req: Request, res: Response) => {
+  const pagina = parseInt(req.query.pagina as string, 10) || 1 // Página atual, padrão para 1
+  const itensPorPagina = parseInt(req.query.itensPorPagina as string, 10) || 10 // Itens por página, padrão para 10
+
+  const inicioIndice = (pagina - 1) * itensPorPagina
+  const fimIndice = inicioIndice + itensPorPagina
+
+  const playlistsPaginadas = dados.playlists.slice(inicioIndice, fimIndice)
+
+  res.json({
+    mensagem: 'Playlists obtidas com sucesso (com paginação)',
+    paginaAtual: pagina,
+    itensPorPagina: itensPorPagina,
+    totalItens: dados.playlists.length,
+    playlist: playlistsPaginadas,
+  })
+}
+
+const obterPlaylistsFiltrados = (req: Request, res: Response) => {
+  let playlistsFiltradas = [...dados.playlists]
+
+  // Aplicar filtros se existirem
+  const { nome } = req.query
+
+  if (nome) {
+    playlistsFiltradas = dados.playlists.filter((playlist) => playlist.nome.startsWith(nome as string))
+  }
+
+  res.json({
+    mensagem: 'Playlists obtidos com sucesso (com filtros)',
+    musicas: playlistsFiltradas,
   })
 }
 
@@ -140,10 +164,7 @@ function verificaMusicasNaoExistem(listaIds: number[]) {
   return naoExiste
 }
 
-function verificaMusicasDaListaAtual(
-  novalista: number[],
-  listaMusicas: number[],
-) {
+function verificaMusicasDaListaAtual(novalista: number[], listaMusicas: number[]) {
   const existe: number[] = []
 
   novalista.forEach((id: number) => {
@@ -151,6 +172,16 @@ function verificaMusicasDaListaAtual(
   })
 
   return existe
+}
+
+const ordenarPlaylistPorNome = (req: Request, res: Response) => {
+  const playlistsCopia = [...dados.playlists]
+  playlistsCopia.sort()
+
+  res.json({
+    mensagem: 'Playlists obtidas com sucesso (ordenadas)',
+    playlists: playlistsCopia.sort((a, b) => a.nome.localeCompare(b.nome)),
+  })
 }
 
 export default {
@@ -161,4 +192,7 @@ export default {
   deletePlaylist,
   addMusica,
   deleteMusica,
+  obterPlaylistsPaginadas,
+  obterPlaylistsFiltrados,
+  ordenarPlaylistPorNome,
 }

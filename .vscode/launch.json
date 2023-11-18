@@ -15,7 +15,6 @@
       ],
       "sourceMaps": true,
       "cwd": "${workspaceFolder}",
-      "protocol": "inspector",
       "console": "integratedTerminal"
     }
   ]

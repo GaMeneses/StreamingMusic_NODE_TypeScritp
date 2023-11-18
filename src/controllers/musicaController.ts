@@ -6,15 +6,11 @@ const addMusica = (req: Request, res: Response) => {
   novaMusica.id = dados.musicas.length + 1
 
   dados.musicas.push(novaMusica)
-  res
-    .status(201)
-    .json({ mensagem: 'Música criada com sucesso', musica: novaMusica })
+  res.status(201).json({ mensagem: 'Música criada com sucesso', musica: novaMusica })
 }
 
 const getAll = (req: Request, res: Response) => {
-  res
-    .status(201)
-    .json({ mensagem: 'Música criada com sucesso', musicas: dados.musicas })
+  res.status(201).json({ mensagem: 'Música retornada com sucesso', musicas: dados.musicas })
 }
 
 const getMusica = (req: Request, res: Response) => {
@@ -55,9 +51,62 @@ const deleteMusica = (req: Request, res: Response) => {
   }
 
   const musicaRemovida = dados.musicas.splice(index, 1)[0]
-  res
-    .status(200)
-    .json({ mensagem: 'Música removida com sucesso', musica: musicaRemovida })
+  res.status(200).json({ mensagem: 'Música removida com sucesso', musica: musicaRemovida })
+}
+
+const obterMusicasPaginadas = (req: Request, res: Response) => {
+  const pagina = parseInt(req.query.pagina as string, 10) || 1 // Página atual, padrão para 1
+  const itensPorPagina = parseInt(req.query.itensPorPagina as string, 10) || 10 // Itens por página, padrão para 10
+
+  const inicioIndice = (pagina - 1) * itensPorPagina
+  const fimIndice = inicioIndice + itensPorPagina
+
+  const musicasPaginadas = dados.musicas.slice(inicioIndice, fimIndice)
+
+  res.json({
+    mensagem: 'Músicas obtidas com sucesso (com paginação)',
+    paginaAtual: pagina,
+    itensPorPagina: itensPorPagina,
+    totalItens: dados.musicas.length,
+    musicas: musicasPaginadas,
+  })
+}
+
+const obterMusicasFiltradas = (req: Request, res: Response) => {
+  let musicasFiltradas = [...dados.musicas]
+
+  // Aplicar filtros se existirem
+  const { artista, duracao, titulo } = req.query
+
+  console.log(artista, duracao, titulo)
+
+  if (artista) {
+    const artistaId = parseInt(artista as string, 10)
+    musicasFiltradas = musicasFiltradas.filter((musica) => musica.artista === artistaId)
+  }
+
+  if (duracao) {
+    musicasFiltradas = musicasFiltradas.filter((musica) => musica.duracao === duracao)
+  }
+
+  if (titulo) {
+    musicasFiltradas = musicasFiltradas.filter((musica) => musica.titulo.startsWith(titulo as string))
+  }
+
+  res.json({
+    mensagem: 'Músicas obtidas com sucesso (com filtros)',
+    musicas: musicasFiltradas,
+  })
+}
+
+const ordenarMusicasPorTitulo = (req: Request, res: Response) => {
+  const musicasCopia = [...dados.musicas]
+  musicasCopia.sort()
+
+  res.json({
+    mensagem: 'Musicas obtidas com sucesso (ordenados)',
+    musicas: musicasCopia.sort((a, b) => a.titulo.localeCompare(b.titulo)),
+  })
 }
 
 export default {
@@ -66,4 +115,7 @@ export default {
   getMusica,
   putMusica,
   deleteMusica,
+  obterMusicasPaginadas,
+  obterMusicasFiltradas,
+  ordenarMusicasPorTitulo,
 }
