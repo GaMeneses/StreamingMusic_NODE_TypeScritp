@@ -1,5 +1,9 @@
 import express from 'express'
 import musicaController from '../controllers/musicaController'
+import artistaController from '../controllers/artistasController'
+import playlistController from '../controllers/playlistsController'
+import acessoController from '../controllers/acessoController'
+import token from '../Util/Token'
 
 const routes = express.Router()
 
@@ -23,6 +27,11 @@ const routes = express.Router()
  *         duracao:
  *           type: string
  *           description: Duração da música (formato HH:MM)
+ *     securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  */
 
 /**
@@ -186,10 +195,32 @@ const routes = express.Router()
  *             example:
  *               mensagem: Música não encontrada
  */
-routes.post('/musicas', musicaController.addMusic)
-routes.get('/musicas', musicaController.getAll)
-routes.get('/musicas/:id', musicaController.getMusic)
-routes.put('/musicas/:id', musicaController.putMusic)
-routes.delete('/musicas/:id', musicaController.deleteMusic)
+routes.post('/musicas', token.verificarToken, musicaController.addMusica)
+routes.get('/musicas', token.verificarToken, musicaController.getAll)
+routes.get('/musicas/:id', token.verificarToken, musicaController.getMusica)
+routes.put('/musicas/:id', token.verificarToken, musicaController.putMusica)
+routes.delete('/musicas/:id', token.verificarToken, musicaController.deleteMusica)
+
+/*Artistas*/
+
+routes.post('/artistas', artistaController.addArtista)
+routes.get('/artistas', artistaController.getAll)
+routes.get('/artistas/:id', artistaController.getArtista)
+routes.put('/artistas/:id', artistaController.putArtista)
+routes.delete('/artistas/:id', artistaController.deleteArtista)
+
+/*Playlist*/
+
+routes.post('/playlists', playlistController.addPlaylist)
+routes.post('/playlists/:id/AdicionarMusica', playlistController.addMusica)
+routes.get('/playlists', playlistController.getAll)
+routes.get('/playlists/:id', playlistController.getPlaylist)
+routes.put('/playlists/:id', playlistController.putPlaylist)
+routes.delete('/playlists/:id', playlistController.deletePlaylist)
+routes.delete('/playlists/:id/RemoverMusica/:musica', playlistController.deleteMusica)
+
+/*Login*/
+
+routes.get('/login', acessoController.login)
 
 export default { routes }

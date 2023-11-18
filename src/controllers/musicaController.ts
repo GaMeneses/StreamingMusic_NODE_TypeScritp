@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import dados from '../database/data'
 
-const addMusic = (req: Request, res: Response) => {
+const addMusica = (req: Request, res: Response) => {
   const novaMusica = req.body
   novaMusica.id = dados.musicas.length + 1
 
@@ -17,7 +17,7 @@ const getAll = (req: Request, res: Response) => {
     .json({ mensagem: 'Música criada com sucesso', musicas: dados.musicas })
 }
 
-const getMusic = (req: Request, res: Response) => {
+const getMusica = (req: Request, res: Response) => {
   const musica = dados.musicas.find((m) => m.id === parseInt(req.params.id))
   if (!musica) {
     return res.status(404).json({ mensagem: 'Música não encontrada' })
@@ -25,7 +25,7 @@ const getMusic = (req: Request, res: Response) => {
   res.json(musica)
 }
 
-const putMusic = (req: Request, res: Response) => {
+const putMusica = (req: Request, res: Response) => {
   const musicaId = parseInt(req.params.id)
   const index = dados.musicas.findIndex((m) => m.id === musicaId)
 
@@ -40,7 +40,7 @@ const putMusic = (req: Request, res: Response) => {
   })
 }
 
-const deleteMusic = (req: Request, res: Response) => {
+const deleteMusica = (req: Request, res: Response) => {
   const musicaId = parseInt(req.params.id)
   const index = dados.musicas.findIndex((m) => m.id === musicaId)
 
@@ -61,9 +61,9 @@ const deleteMusic = (req: Request, res: Response) => {
 }
 
 export default {
-  addMusic,
+  addMusica,
   getAll,
-  getMusic,
-  putMusic,
-  deleteMusic,
+  getMusica,
+  putMusica,
+  deleteMusica,
 }
