@@ -8,20 +8,13 @@ const options: swaggerJSDoc.Options = {
     info: {
       title: 'Streaming de Música',
       version: '1.0.0',
-      description:
-        'Uma API para lidar com informações sobre musicas, playlists, autores e usuários',
+      description: 'Uma API para lidar com informações sobre músicas, playlists, autores e usuários',
     },
-  },
-  components: {
-    schemas: {
-      Musica: {
-        type: 'object',
-        properties: {
-          titulo: { type: 'string' },
-          artista: { type: 'string' },
-          genero: { type: 'string' },
-        },
-        required: ['titulo', 'artista', 'genero'],
+    securityDefinitions: {
+      bearerAuth: {
+        type: 'apiKey',
+        name: 'Authorization',
+        in: 'header',
       },
     },
   },
@@ -31,7 +24,29 @@ const options: swaggerJSDoc.Options = {
 const swaggerSpec = swaggerJSDoc(options)
 
 function swaggerDocs(server: Express, port: number) {
-  server.use('/documentacao', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+  server.use(
+    '/documentacao',
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerSpec, {
+      explorer: true,
+      swaggerOptions: {
+        docExpansion: 'list',
+        defaultModelRendering: 'model',
+        showCommonExtensions: true,
+        plugins: [
+          {
+            statePlugins: {
+              spec: {
+                wrapSelectors: {
+                  allowAuthorize: () => () => true,
+                },
+              },
+            },
+          },
+        ],
+      },
+    }),
+  )
 
   server.get('/doc.json', (req: Request, res: Response) => {
     res.setHeader('content-type', 'application/json')

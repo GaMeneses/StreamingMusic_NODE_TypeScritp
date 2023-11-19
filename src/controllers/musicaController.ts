@@ -1,11 +1,23 @@
 import { Request, Response } from 'express'
 import dados from '../database/data'
 
-const addMusica = (req: Request, res: Response) => {
-  const novaMusica = req.body
-  novaMusica.id = dados.musicas.length + 1
+interface NovoMusica {
+  id: number
+  titulo: string
+  artista: number
+  duracao: string
+}
 
+const addMusica = (req: Request, res: Response) => {
+  const { titulo, artista, duracao } = req.body as NovoMusica
+
+  if (!titulo || !artista || !duracao) {
+    return res.status(400).json({ mensagem: 'Título, artista e duração são campos obrigatórios' })
+  }
+
+  const novaMusica = { id: dados.musicas.length + 1, titulo, artista, duracao }
   dados.musicas.push(novaMusica)
+
   res.status(201).json({ mensagem: 'Música criada com sucesso', musica: novaMusica })
 }
 
@@ -28,8 +40,19 @@ const putMusica = (req: Request, res: Response) => {
   if (index === -1) {
     return res.status(404).json({ mensagem: 'Música não encontrada' })
   }
+  const { titulo, artista, duracao } = req.body as NovoMusica
 
-  dados.musicas[index] = { ...dados.musicas[index], ...req.body }
+  if (titulo) {
+    dados.musicas[index].titulo = titulo
+  }
+  if (artista) {
+    dados.musicas[index].artista = artista
+  }
+
+  if (duracao) {
+    dados.musicas[index].duracao = duracao
+  }
+
   res.status(200).json({
     mensagem: 'Música atualizada com sucesso',
     musica: dados.musicas[index],
@@ -77,8 +100,6 @@ const obterMusicasFiltradas = (req: Request, res: Response) => {
 
   // Aplicar filtros se existirem
   const { artista, duracao, titulo } = req.query
-
-  console.log(artista, duracao, titulo)
 
   if (artista) {
     const artistaId = parseInt(artista as string, 10)

@@ -1,6 +1,10 @@
 import { Request, Response } from 'express'
 import dados from '../database/data'
 
+interface NovoArtista {
+  nome: string
+}
+
 const getAll = (req: Request, res: Response) => {
   res.json(dados.artistas)
 }
@@ -14,8 +18,17 @@ const getArtista = (req: Request, res: Response) => {
 }
 
 const addArtista = (req: Request, res: Response) => {
-  const novoArtista = req.body
-  novoArtista.id = dados.artistas.length + 1
+  const { nome } = req.body as NovoArtista
+
+  if (!nome) {
+    return res.status(400).json({ mensagem: 'Nome é um campo obrigatório' })
+  }
+
+  const novoArtista = {
+    id: dados.artistas.length + 1,
+    nome,
+  }
+
   dados.artistas.push(novoArtista)
   res.status(201).json({ mensagem: 'Artista criado com sucesso', artista: novoArtista })
 }
@@ -28,7 +41,10 @@ const putArtista = (req: Request, res: Response) => {
     return res.status(404).json({ mensagem: 'Artista não encontrado' })
   }
 
-  dados.artistas[index] = { ...dados.artistas[index], ...req.body }
+  const { nome } = req.body as NovoArtista
+  if (!nome) return res.status(400).json({ mensagem: 'Nome não pode ser vazio' })
+
+  dados.artistas[index].nome = nome
   res.status(200).json({
     mensagem: 'Artista atualizado com sucesso',
     artista: dados.artistas[index],
