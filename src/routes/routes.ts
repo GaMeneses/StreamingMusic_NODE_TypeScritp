@@ -19,6 +19,9 @@ const routes = express.Router()
  *         - artista
  *         - duracao
  *       properties:
+ *         id:
+ *           type: integer
+ *           description: Id da música
  *         titulo:
  *           type: string
  *           description: Título da música
@@ -31,6 +34,9 @@ const routes = express.Router()
  *     Playlist:
  *       type: object
  *       properties:
+ *         id:
+ *           type: integer
+ *           description: Id da playlist
  *         nome:
  *           type: string
  *           description: Nome da playlist
@@ -44,6 +50,9 @@ const routes = express.Router()
  *     Artista:
  *       type: object
  *       properties:
+ *         id:
+ *           type: integer
+ *           description: Id do artista
  *         nome:
  *           type: string
  *           description: Nome do artista
@@ -55,6 +64,9 @@ const routes = express.Router()
  *         - login
  *         - password
  *       properties:
+ *         id:
+ *           type: integer
+ *           description: Id do usuário
  *         login:
  *           type: string
  *           description: Nome de usuário
@@ -167,6 +179,84 @@ routes.post('/autenticar', acessoController.login)
  *               $ref: '#/components/schemas/Musica'
  *       404:
  *         description: Música não encontrada
+ */
+
+/**
+ * @swagger
+ * /musicasPaginada:
+ *   get:
+ *     summary: Obtém músicas com paginação
+ *     tags: [Músicas]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: pagina
+ *         in: query
+ *         description: Número da página desejada
+ *         required: false
+ *         type: integer
+ *       - name: itensPorPagina
+ *         in: query
+ *         description: Número de itens por página
+ *         required: false
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: Músicas obtidas com sucesso (com paginação)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Musica'
+ */
+
+/**
+ * @swagger
+ * /musicasPorFiltro:
+ *   get:
+ *     summary: Obtém músicas com filtros
+ *     tags: [Músicas]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: artista
+ *         in: query
+ *         description: ID do artista para filtrar
+ *         required: false
+ *         type: integer
+ *       - name: duracao
+ *         in: query
+ *         description: Duração da música para filtrar
+ *         required: false
+ *         type: string
+ *       - name: titulo
+ *         in: query
+ *         description: Título da música para filtrar
+ *         required: false
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Músicas obtidas com sucesso (com filtros)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Musica'
+ */
+
+/**
+ * @swagger
+ * /musicasOrdernadas:
+ *   get:
+ *     summary: Obtém músicas ordenadas por título
+ *     tags: [Músicas]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Músicas obtidas com sucesso (ordenadas)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Musica'
  */
 
 /**
@@ -310,6 +400,74 @@ routes.delete('/musicas/:id', token.autenticarMiddleware, musicaController.delet
  *     responses:
  *       201:
  *         description: Artista criado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Artista'
+ */
+
+/**
+ * @swagger
+ * /artistasPaginada:
+ *   get:
+ *     summary: Obtém artistas com paginação
+ *     tags: [Artistas]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: pagina
+ *         in: query
+ *         description: Número da página desejada
+ *         required: false
+ *         type: integer
+ *       - name: itensPorPagina
+ *         in: query
+ *         description: Número de itens por página
+ *         required: false
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: Artistas obtidos com sucesso (com paginação)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Artista'
+ */
+
+/**
+ * @swagger
+ * /obterArtistasFiltrados:
+ *   get:
+ *     summary: Obtém artistas com filtros
+ *     tags: [Artistas]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: nome
+ *         in: query
+ *         description: Nome do artista para filtrar
+ *         required: false
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Artistas obtidos com sucesso (com filtros)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Artista'
+ */
+
+/**
+ * @swagger
+ * /ordenarArtistasPorNome:
+ *   get:
+ *     summary: Obtém artistas ordenados por nome
+ *     tags: [Artistas]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Artistas obtidos com sucesso (ordenados)
  *         content:
  *           application/json:
  *             schema:
@@ -465,6 +623,141 @@ routes.delete('/artistas/:id', token.autenticarMiddleware, artistaController.del
  *                 id: 3
  *                 nome: Playlist 3
  *                 musicas: [7, 8, 9]
+ */
+
+/**
+ * @swagger
+ * /playlistsPaginada:
+ *   get:
+ *     summary: Obtém playlists com paginação
+ *     tags: [Playlists]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: pagina
+ *         in: query
+ *         description: Número da página desejada
+ *         required: false
+ *         type: integer
+ *       - name: itensPorPagina
+ *         in: query
+ *         description: Número de itens por página
+ *         required: false
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: Playlists obtidas com sucesso (com paginação)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Playlist'
+ */
+
+/**
+ * @swagger
+ * /playlistsPorFiltro:
+ *   get:
+ *     summary: Obtém playlists com filtros
+ *     tags: [Playlists]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: nome
+ *         in: query
+ *         description: Nome da playlist para filtrar
+ *         required: false
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Playlists obtidas com sucesso (com filtros)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Playlist'
+ */
+
+/**
+ * @swagger
+ * /playlistsOrdernadas:
+ *   get:
+ *     summary: Obtém playlists ordenadas por nome
+ *     tags: [Playlists]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Playlists obtidas com sucesso (ordenadas)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Playlist'
+ */
+
+/**
+ * @swagger
+ * /playlists/{id}/AdicionarMusica:
+ *   post:
+ *     summary: Adiciona músicas a uma playlist
+ *     tags: [Playlists - Músicas]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID da playlist
+ *         required: true
+ *         type: integer
+ *     requestBody:
+ *       description: Lista de músicas a serem adicionadas
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               musicas:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *     responses:
+ *       201:
+ *         description: Músicas inseridas na playlist com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Playlist'
+ *       404:
+ *         description: Playlist não encontrada ou músicas não existentes ou já presentes na playlist
+ */
+
+/**
+ * @swagger
+ * /playlists/{id}/RemoverMusica/{musica}:
+ *   delete:
+ *     summary: Remove uma música de uma playlist
+ *     tags: [Playlists - Músicas]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID da playlist
+ *         required: true
+ *         type: integer
+ *       - name: musica
+ *         in: path
+ *         description: ID da música a ser removida
+ *         required: true
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: Música removida da playlist com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Playlist'
+ *       404:
+ *         description: Playlist não encontrada ou música não encontrada na playlist
  */
 
 /**
