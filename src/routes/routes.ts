@@ -79,6 +79,11 @@ const routes = express.Router()
  *         nome:
  *           type: string
  *           description: Nome do artista
+ *   securitySchemes:
+ *     beareAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  */
 
 /*Token*/

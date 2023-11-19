@@ -30,9 +30,6 @@ function swaggerDocs(server: Express, port: number) {
     swaggerUi.setup(swaggerSpec, {
       explorer: true,
       swaggerOptions: {
-        docExpansion: 'list',
-        defaultModelRendering: 'model',
-        showCommonExtensions: true,
         plugins: [
           {
             statePlugins: {
@@ -44,6 +41,7 @@ function swaggerDocs(server: Express, port: number) {
             },
           },
         ],
+        security: [{ bearerAuth: [] }],
       },
     }),
   )
