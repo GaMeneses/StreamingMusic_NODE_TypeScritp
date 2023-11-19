@@ -10,6 +10,11 @@ const options: swaggerJSDoc.Options = {
       version: '1.0.0',
       description: 'Uma API para lidar com informações sobre músicas, playlists, autores e usuários',
     },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
     securityDefinitions: {
       bearerAuth: {
         type: 'apiKey',

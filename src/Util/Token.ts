@@ -26,7 +26,7 @@ const autenticarMiddleware = (req: Request, res: Response, next: NextFunction) =
   }
 
   try {
-    const usuarioAutenticado = verificarToken(token)
+    const usuarioAutenticado = verificarToken(token.replace('Bearer ', ''))
     req.body.usuarioAutenticado = usuarioAutenticado
     next()
   } catch (erro) {

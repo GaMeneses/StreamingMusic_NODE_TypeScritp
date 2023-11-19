@@ -2,20 +2,15 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
-      "args": [
-        "${workspaceFolder}/src/index.ts"
-      ],
-      "runtimeArgs": [
-        "-r",
-        "ts-node/register"
-      ],
+      "name": "Debug API",
+      "program": "${workspaceFolder}/dist/index.js",
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "outFiles": ["${workspaceFolder}/src/index.ts"],
       "sourceMaps": true,
-      "cwd": "${workspaceFolder}",
-      "console": "integratedTerminal"
+      "protocol": "inspector",
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }
