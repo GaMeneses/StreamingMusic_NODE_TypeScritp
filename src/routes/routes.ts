@@ -79,6 +79,18 @@ const routes = express.Router()
  *         nome:
  *           type: string
  *           description: Nome do artista
+ *     Autenticar:
+ *       type: object
+ *       required:
+ *         - login
+ *         - password
+ *       properties:
+ *         login:
+ *           type: string
+ *           description: Nome de usuário
+ *         password:
+ *           type: string
+ *           description: Senha do usuário
  *   securitySchemes:
  *     bearerAuth:
  *       type: http
@@ -99,7 +111,7 @@ const routes = express.Router()
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Usuario'
+ *             $ref: '#/components/schemas/Autenticar'
  *     responses:
  *       200:
  *         description: Token JWT gerado com sucesso.
@@ -279,12 +291,6 @@ routes.post('/autenticar', acessoController.login)
  *         schema:
  *           type: integer
  *         description: ID da música a ser atualizada
- *       - in: header
- *         name: Authorization
- *         schema:
- *           type: string
- *         required: true
- *         description: Token de autenticação
  *     requestBody:
  *       required: true
  *       content:
@@ -317,12 +323,6 @@ routes.post('/autenticar', acessoController.login)
  *         schema:
  *           type: integer
  *         description: ID da música a ser deletada
- *       - in: header
- *         name: Authorization
- *         schema:
- *           type: string
- *         required: true
- *         description: Token de autenticação
  *     responses:
  *       200:
  *         description: Música deletada com sucesso
@@ -494,12 +494,6 @@ routes.delete('/musicas/:id', token.autenticarMiddleware, musicaController.delet
  *         schema:
  *           type: integer
  *         description: ID do artista a ser atualizado
- *       - in: header
- *         name: Authorization
- *         schema:
- *           type: string
- *         required: true
- *         description: Token de autenticação
  *     requestBody:
  *       required: true
  *       content:
@@ -532,12 +526,6 @@ routes.delete('/musicas/:id', token.autenticarMiddleware, musicaController.delet
  *         schema:
  *           type: integer
  *         description: ID do artista a ser deletado
- *       - in: header
- *         name: Authorization
- *         schema:
- *           type: string
- *         required: true
- *         description: Token de autenticação
  *     responses:
  *       200:
  *         description: Artista deletado com sucesso
@@ -780,12 +768,6 @@ routes.delete('/artistas/:id', token.autenticarMiddleware, artistaController.del
  *         schema:
  *           type: integer
  *         description: ID da playlist a ser atualizada
- *       - in: header
- *         name: Authorization
- *         schema:
- *           type: string
- *         required: true
- *         description: Token de autenticação
  *     requestBody:
  *       required: true
  *       content:
@@ -841,6 +823,23 @@ routes.delete('/playlists/:id', token.autenticarMiddleware, playlistController.d
 routes.delete('/playlists/:id/RemoverMusica/:musica', token.autenticarMiddleware, playlistController.deleteMusica)
 
 /*Login*/
+
+/**
+ * @swagger
+ * /usuario:
+ *   get:
+ *     summary: Obtém todos as usuários
+ *     tags: [Usuário]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de usuário obtida com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Usuario'
+ */
 
 /**
  * @swagger
@@ -921,8 +920,9 @@ routes.delete('/playlists/:id/RemoverMusica/:musica', token.autenticarMiddleware
  *         description: Usuário não encontrado.
  */
 
-routes.post('/usuario', acessoController.addUsuario)
-routes.put('/usuario/:id', acessoController.putUsuario)
-routes.delete('/usuario/:id', acessoController.deleteUsuario)
+routes.post('/usuario', token.autenticarMiddleware, acessoController.addUsuario)
+routes.put('/usuario/:id', token.autenticarMiddleware, acessoController.putUsuario)
+routes.delete('/usuario/:id', token.autenticarMiddleware, acessoController.deleteUsuario)
+routes.get('/usuario', token.autenticarMiddleware, acessoController.getAll)
 
 export default { routes }

@@ -33,7 +33,6 @@ function swaggerDocs(server: Express, port: number) {
     '/documentacao',
     swaggerUi.serve,
     swaggerUi.setup(swaggerSpec, {
-      explorer: true,
       swaggerOptions: {
         plugins: [
           {

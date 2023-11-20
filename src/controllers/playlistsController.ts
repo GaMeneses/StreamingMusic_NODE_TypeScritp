@@ -1,6 +1,12 @@
 import { Request, Response } from 'express'
 import dados from '../database/data'
 
+interface Playlist {
+  id: number
+  nome: string
+  musicas: number[]
+}
+
 const getAll = (req: Request, res: Response) => {
   res.json(dados.playlists)
 }
@@ -14,9 +20,9 @@ const getPlaylist = (req: Request, res: Response) => {
 }
 
 const addPlaylist = (req: Request, res: Response) => {
-  const novaPlaylist = req.body
+  const { nome, musicas }: { nome: string; musicas: number[] } = req.body
 
-  const ids = verificaMusicasNaoExistem(novaPlaylist.musicas)
+  const ids = verificaMusicasNaoExistem(musicas)
 
   if (ids.length > 0) {
     return res.status(404).json({
@@ -25,7 +31,11 @@ const addPlaylist = (req: Request, res: Response) => {
     })
   }
 
-  novaPlaylist.id = dados.playlists.length + 1
+  const novaPlaylist: Playlist = {
+    id: dados.playlists.length + 1,
+    nome: nome,
+    musicas: musicas,
+  }
   dados.playlists.push(novaPlaylist)
   res.status(201).json({ mensagem: 'Playlist criada com sucesso', playlist: novaPlaylist })
 }
@@ -75,7 +85,22 @@ const putPlaylist = (req: Request, res: Response) => {
     return res.status(404).json({ mensagem: 'Playlist não encontrada' })
   }
 
-  dados.playlists[index] = { ...dados.playlists[index], ...req.body }
+  const { nome, musicas } = req.body as Playlist
+
+  if (nome) dados.playlists[index].nome = nome
+  if (musicas) {
+    const ids = verificaMusicasNaoExistem(musicas)
+
+    if (ids.length > 0) {
+      return res.status(404).json({
+        mensagem: 'Não foi possível inserir na playList, essa(s) musica(s) não existe(m)!',
+        musicas: ids,
+      })
+    }
+
+    dados.playlists[index].musicas = musicas
+  }
+
   res.status(200).json({
     mensagem: 'Playlist atualizada com sucesso',
     playlist: dados.playlists[index],

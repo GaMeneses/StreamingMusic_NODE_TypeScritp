@@ -46,6 +46,11 @@ const putMusica = (req: Request, res: Response) => {
     dados.musicas[index].titulo = titulo
   }
   if (artista) {
+    const indexArtista = dados.artistas.findIndex((a) => a.id === artista)
+
+    if (indexArtista === -1) {
+      return res.status(404).json({ mensagem: 'Artista não encontrado' })
+    }
     dados.musicas[index].artista = artista
   }
 
