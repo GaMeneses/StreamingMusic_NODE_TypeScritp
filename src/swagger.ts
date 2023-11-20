@@ -8,7 +8,9 @@ const options: swaggerJSDoc.Options = {
     info: {
       title: 'Streaming de Música',
       version: '1.0.0',
-      description: 'Uma API para lidar com informações sobre músicas, playlists, autores e usuários',
+      description:
+        'Uma API para lidar com informações sobre músicas, playlists, autores e usuários <br/><strong>Alunos:<br/>- Gabriel Meneses Costa Curta<br/>- Daniel Nascimento Cruz<br/>- Alex Artilha Lepre<br/>- Rodolfo Oliveira Ruback',
+      Alunos: '',
     },
     security: [
       {
